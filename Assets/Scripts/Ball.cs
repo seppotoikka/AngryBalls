@@ -23,7 +23,7 @@ public class Ball : MonoBehaviour {
 	public bool JumpToSlingshot(Vector3 position)
 	{
 		if (state == States.idle) {
-			GetComponent<Rigidbody2D>().MovePosition (position);
+			GetComponent<Rigidbody2D>().position = position;
 			state = States.armed;
 			return true;
 		}

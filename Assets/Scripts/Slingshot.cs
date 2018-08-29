@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Slingshot : MonoBehaviour {
 
-	public Transform endPoint;
+	public Transform stringsEndPoint;
 
 	private Ball currentlyLoadedBall;
 
@@ -20,7 +20,7 @@ public class Slingshot : MonoBehaviour {
 
 	void Update(){
 		if (currentlyLoadedBall != null) {
-			endPoint.position = currentlyLoadedBall.transform.position;
+			//stringsEndPoint.position = currentlyLoadedBall.transform.position;
 			UpdateEndPoint ();
 			UpdateRubberBands ();
 		}
@@ -28,7 +28,7 @@ public class Slingshot : MonoBehaviour {
 	}
 
 	public bool LoadSlingshot(Ball ball){
-		if (currentlyLoadedBall == null && ball.JumpToSlingshot(endPoint.position)) {
+		if (currentlyLoadedBall == null && ball.JumpToSlingshot(stringsEndPoint.position)) {
 			currentlyLoadedBall = ball;
 			return true;
 		}
@@ -37,13 +37,13 @@ public class Slingshot : MonoBehaviour {
 
 	private void UpdateRubberBands(){
 		foreach (LineRenderer lineRenderer in lineRenderers) {
-			lineRenderer.SetPosition (1, endPoint.localPosition - lineRenderer.transform.localPosition);
+			lineRenderer.SetPosition (1, stringsEndPoint.localPosition - lineRenderer.transform.localPosition);
 		}
 	}
 
 	private void UpdateEndPoint(){
 		Vector2 vectorFromAimPoint = (Vector2) currentlyLoadedBall.transform.position - aimPoint;
-		endPoint.transform.position = aimPoint + vectorFromAimPoint + 
+		stringsEndPoint.transform.position = aimPoint + vectorFromAimPoint + 
 			vectorFromAimPoint.normalized * currentlyLoadedBall.ballCollider.bounds.extents.x;
 	}
 }

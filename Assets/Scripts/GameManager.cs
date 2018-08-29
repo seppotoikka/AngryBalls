@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,16 +19,6 @@ public class GameManager : MonoBehaviour {
 		balls = new List<Ball>(FindObjectsOfType<Ball>());
 		slingshot = FindObjectOfType<Slingshot> ();
 		mainCamera = Camera.main;
-	}
-
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
 	}
 
 	public void ProcessInput (Vector2 touchPosition, TouchPhase touchPhase) 
@@ -51,7 +42,7 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
-	private void ProcessIdlePhaseInput(Vector2 positionInWorldSpace, TouchPhase touchPhase)
+    private void ProcessIdlePhaseInput(Vector2 positionInWorldSpace, TouchPhase touchPhase)
 	{
 		if (touchPhase == TouchPhase.Began) 
 		{
