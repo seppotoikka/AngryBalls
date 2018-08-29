@@ -3,92 +3,68 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour {
-  
-    public Slingshot slingshot;
-    
-    public GameStates.State gameState;
 
-    [HideInInspector]
-    public List<Ball> balls;
-    List<Baddie> baddies;
-    List<BuildingBlock> buildingBlocks;
-    [HideInInspector]
-    public Camera mainCamera;
+	public static GameManager Instance;
 
-    private void Start()
-    {
-        balls = new List<Ball>(FindObjectsOfType<Ball>());
-        foreach (Ball ball in balls)
-        {
-            ball.SetManager(this);
-        }
+	public enum States { idle, slingArmed, slingAiming, ballReleased }
+	public States state;
 
-        baddies = new List<Baddie>(FindObjectsOfType<Baddie>());
-        foreach (Baddie baddie in baddies)
-        {
-            baddie.SetManager(this);
-        }
+	private List<Ball> balls;
+	private Slingshot slingshot;
+	private Camera mainCamera;
 
-        buildingBlocks = new List<BuildingBlock>(FindObjectsOfType<BuildingBlock>());
-        foreach (BuildingBlock block in buildingBlocks)
-        {
-            block.SetManager(this);
-        }
+	void Awake () {
+		Instance = this;
+		balls = new List<Ball>(FindObjectsOfType<Ball>());
+		slingshot = FindObjectOfType<Slingshot> ();
+		mainCamera = Camera.main;
+	}
 
-        gameState = GameStates.State.idle;
-        mainCamera = Camera.main;
-    }
+	// Use this for initialization
+	void Start () {
+		
+	}
+	
+	// Update is called once per frame
+	void Update () {
+		
+	}
 
-    public void ProcessInput(Vector2 touchPos, TouchPhase touchPhase)
-    {
-        GameStates.ProcessGameStateInput(this, mainCamera.ScreenToWorldPoint(touchPos), touchPhase);
-    }  
+	public void ProcessInput (Vector2 touchPosition, TouchPhase touchPhase) 
+	{
+		Vector2 positionInWorldSpace = mainCamera.ScreenToWorldPoint (touchPosition);
 
-    public void BallDestroyed(Ball ball)
-    {
-        balls.Remove(ball);
+		switch (state) {
 
-        //check if all balls have been launched
-        if (balls.Count == 0)
-        {
-            //win or lose?
-            if (baddies.Count > 0)
-            {
-                //you lose
-                Debug.Log("You lose!");
-            }
-            else
-            {
-                //you win
-                Debug.Log("You win!");
-            }
-        }
-    }
+		case States.idle:
+			ProcessIdlePhaseInput (positionInWorldSpace, touchPhase);
+			break;
 
-    public void BaddieDestroyed(Baddie baddie)
-    {
-        baddies.Remove(baddie);
-    }
+		case States.slingArmed:
+			break;
 
-    public void CreateExplosion(Vector2 explosionPosition, float force, float radius)
-    {
-        foreach(Baddie baddie in baddies)
-        {
-            //check if baddie is within explosion radius
-            Vector2 baddieClosestPoint = baddie.baddieCollider.bounds.ClosestPoint(explosionPosition);
-            Vector2 explosionToBaddieVector = baddieClosestPoint - explosionPosition;
-            float distanceFromExplosion = explosionToBaddieVector.magnitude;
-            if (distanceFromExplosion < radius)
-            {
-                float appliedForce = (1 - distanceFromExplosion / radius) * force;
-                baddie.rb2D.AddForceAtPosition(explosionToBaddieVector.normalized * appliedForce, explosionPosition);
-                baddie.TakeDamage(appliedForce);
-            }
-        }
+		case States.slingAiming:
+			break;
 
-        foreach(BuildingBlock block in buildingBlocks)
-        {
+		default:
+			break;
+		}
+	}
 
-        }
-    }
+	private void ProcessIdlePhaseInput(Vector2 positionInWorldSpace, TouchPhase touchPhase)
+	{
+		if (touchPhase == TouchPhase.Began) 
+		{
+			foreach (Ball ball in balls) 
+			{
+				if (ball.state == Ball.States.idle && ball.ballCollider.bounds.Contains (positionInWorldSpace)) 
+				{
+					if (slingshot.LoadSlingshot (ball)) 
+					{
+						state = States.slingArmed;
+					}
+				}
+			}
+		}
+	}
 }

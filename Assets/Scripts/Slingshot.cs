@@ -4,79 +4,46 @@ using UnityEngine;
 
 public class Slingshot : MonoBehaviour {
 
-    public Transform backString;
-    public Transform frontString;
-    public SlingshotBallHolder ballHolder;
-    [Space]
-    public float maxLength;
-    public float maxForce;
+	public Transform endPoint;
 
-    Ball currentBall = null;
+	private Ball currentlyLoadedBall;
 
-    private Vector2 slingshotBasePoint;
+	private LineRenderer[] lineRenderers;
 
-    private void Awake()
-    {
-        slingshotBasePoint = (frontString.position + backString.position) / 2;
-    }
+	private Vector2 aimPoint;
 
-    public bool IsArmed
-    {
-        get
-        {
-            return (currentBall != null);
-        }
-    }
+	void Awake(){
+		lineRenderers = GetComponentsInChildren<LineRenderer> ();
+		aimPoint = (lineRenderers [0].transform.position + lineRenderers [1].transform.position) / 2;
+		UpdateRubberBands ();
+	}
 
-    public bool LoadSlingshot(Ball ball)
-    {
-        if (currentBall == null)
-        {
-            currentBall = ball;
-            ball.JumpToSling(ballHolder.transform);
-            ballHolder.BallLoaded(ball);
-            return true;
-        }
+	void Update(){
+		if (currentlyLoadedBall != null) {
+			endPoint.position = currentlyLoadedBall.transform.position;
+			UpdateEndPoint ();
+			UpdateRubberBands ();
+		}
+		
+	}
 
-        return false;
-    }
+	public bool LoadSlingshot(Ball ball){
+		if (currentlyLoadedBall == null && ball.JumpToSlingshot(endPoint.position)) {
+			currentlyLoadedBall = ball;
+			return true;
+		}
+		return false;
+	}
 
-    public void UpdateSlingshotPosition(Vector2 touchPos)
-    {
-        if (currentBall != null)
-        {
-            transform.localPosition = GetSlingshotVector(touchPos);
-            currentBall.rb2D.MovePosition(transform.position);
-            ballHolder.UpdatePosition(currentBall);
-        }
-    }
+	private void UpdateRubberBands(){
+		foreach (LineRenderer lineRenderer in lineRenderers) {
+			lineRenderer.SetPosition (1, endPoint.localPosition - lineRenderer.transform.localPosition);
+		}
+	}
 
-    public bool ReleaseBall(Vector2 touchPos)
-    {
-        if (currentBall != null)
-        {
-            //launch ball
-            Vector2 slingshotVector = GetSlingshotVector(currentBall.transform.position);
-            float forceMultiplier = slingshotVector.magnitude / maxLength * maxForce;
-            currentBall.Launch(slingshotVector * -1 * forceMultiplier);
-            Debug.Log("Touch pos: " + touchPos + "; SlingshotPos: " + slingshotBasePoint + "Vector: " + GetSlingshotVector(touchPos));
-            //return slingshot to resting position
-            transform.localPosition = Vector3.zero;
-            ballHolder.ResetPosition();
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    private Vector2 GetSlingshotVector(Vector2 touchPos)
-    {
-        Vector2 vectorFromSlingshotBase = touchPos - slingshotBasePoint;
-        float distanceMagnitude = vectorFromSlingshotBase.magnitude;
-        float clampedDistanceMagnitude = Mathf.Clamp(distanceMagnitude, 0, maxLength);
-
-        return vectorFromSlingshotBase.normalized * clampedDistanceMagnitude;
-    }
+	private void UpdateEndPoint(){
+		Vector2 vectorFromAimPoint = (Vector2) currentlyLoadedBall.transform.position - aimPoint;
+		endPoint.transform.position = aimPoint + vectorFromAimPoint + 
+			vectorFromAimPoint.normalized * currentlyLoadedBall.ballCollider.bounds.extents.x;
+	}
 }

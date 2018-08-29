@@ -189,7 +189,8 @@ Prefab:
       propertyPath: m_AngularDrag
       value: 5
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 114180379057465822, guid: 3672aefdd659c0b4e85098f0fb3b7971, type: 2}
   m_SourcePrefab: {fileID: 100100000, guid: 3672aefdd659c0b4e85098f0fb3b7971, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &145385465
@@ -322,9 +323,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 158131863}
-  - component: {fileID: 158131864}
   m_Layer: 0
-  m_Name: BallHolder
+  m_Name: EndPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -341,23 +341,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1237822500}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &158131864
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 158131862}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ab092197081873442bcada587723b00a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  backStringBase: {fileID: 820680424}
-  frontStringBase: {fileID: 765488706}
-  slingshot: {fileID: 1453889264}
-  stringBaseCenter: {x: 0, y: 0, z: 0}
 --- !u!1 &273953347
 GameObject:
   m_ObjectHideFlags: 0
@@ -396,7 +381,7 @@ BoxCollider2D:
     newSize: {x: 40, y: 1}
     adaptiveTilingThreshold: 1
     drawMode: 2
-    adaptiveTiling: 1
+    adaptiveTiling: 0
   m_AutoTiling: 1
   serializedVersion: 2
   m_Size: {x: 0.64, y: 0.16}
@@ -437,13 +422,13 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: ef079dd9aa0b14d49b5d90727cc71fc9, type: 3}
-  m_Color: {r: 0.5377358, g: 0.3500613, b: 0.13950695, a: 1}
+  m_Color: {r: 0.2789609, g: 0.4433962, b: 0.20287469, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 2
   m_Size: {x: 40, y: 1}
   m_AdaptiveModeThreshold: 1
-  m_SpriteTileMode: 1
+  m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
@@ -627,10 +612,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 423656032}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e2289848d0e0d6a4295d4afade0ba015, type: 3}
+  m_Script: {fileID: 11500000, guid: 5a49d9c6261413548a3e005eb132650a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 423656034}
 --- !u!114 &423656034
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -642,10 +626,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa7fb5139b257a4cb0c8f2814edcbd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slingshot: {fileID: 1453889264}
-  gameState: 0
-  balls: []
-  mainCamera: {fileID: 0}
+  state: 0
 --- !u!4 &423656035
 Transform:
   m_ObjectHideFlags: 0
@@ -745,7 +726,6 @@ GameObject:
   m_Component:
   - component: {fileID: 765488706}
   - component: {fileID: 765488708}
-  - component: {fileID: 765488707}
   m_Layer: 0
   m_Name: FrontString
   m_TagString: Untagged
@@ -764,20 +744,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1237822500}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &765488707
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 765488705}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a7e4c7846334d5f44a0f0b66aaa3c0a1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ballEnd: {fileID: 158131863}
 --- !u!120 &765488708
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -793,7 +761,7 @@ LineRenderer:
   m_ReflectionProbeUsage: 0
   m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 2100000, guid: 33d65351258bab9448a6a08ce29957f7, type: 2}
+  - {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -954,7 +922,6 @@ GameObject:
   m_Component:
   - component: {fileID: 820680424}
   - component: {fileID: 820680426}
-  - component: {fileID: 820680425}
   m_Layer: 0
   m_Name: BackString
   m_TagString: Untagged
@@ -973,20 +940,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1237822500}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &820680425
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 820680423}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a7e4c7846334d5f44a0f0b66aaa3c0a1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ballEnd: {fileID: 158131863}
 --- !u!120 &820680426
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -1002,7 +957,7 @@ LineRenderer:
   m_ReflectionProbeUsage: 0
   m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 2100000, guid: 33d65351258bab9448a6a08ce29957f7, type: 2}
+  - {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1214,6 +1169,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1237822500}
+  - component: {fileID: 1237822499}
   m_Layer: 0
   m_Name: Slingshot
   m_TagString: Untagged
@@ -1221,6 +1177,18 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &1237822499
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1237822498}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 500b80f14f3ea234fbba1852a2d72b84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  endPoint: {fileID: 158131863}
 --- !u!4 &1237822500
 Transform:
   m_ObjectHideFlags: 0
@@ -1233,58 +1201,30 @@ Transform:
   m_Children:
   - {fileID: 1688541066}
   - {fileID: 794044756}
-  - {fileID: 1453889263}
   - {fileID: 820680424}
   - {fileID: 765488706}
   - {fileID: 158131863}
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1453889262
+--- !u!1 &1363089575 stripped
 GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1453889263}
-  - component: {fileID: 1453889264}
-  m_Layer: 0
-  m_Name: Slingshot
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1453889263
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1453889262}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1237822500}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1453889264
+  m_CorrespondingSourceObject: {fileID: 1179803669887746, guid: 3672aefdd659c0b4e85098f0fb3b7971,
+    type: 2}
+  m_PrefabInternal: {fileID: 92993402}
+--- !u!114 &1363089576
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1453889262}
+  m_GameObject: {fileID: 1363089575}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 500b80f14f3ea234fbba1852a2d72b84, type: 3}
+  m_Script: {fileID: 11500000, guid: fd9475e28afe9aa4c8556dafd609d305, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  backString: {fileID: 820680424}
-  frontString: {fileID: 765488706}
-  ballHolder: {fileID: 158131864}
-  maxLength: 2
-  maxForce: 0.5
+  state: 0
+  ballCollider: {fileID: 0}
 --- !u!1 &1467455468
 GameObject:
   m_ObjectHideFlags: 0

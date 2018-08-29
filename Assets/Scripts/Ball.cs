@@ -2,47 +2,36 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//prevent errors
 [RequireComponent(typeof(Collider2D))]
-[RequireComponent(typeof(Rigidbody2D))]
+public class Ball : MonoBehaviour {
 
-public abstract class Ball : MonoBehaviour {
+	public enum States { idle, armed, launched }
+	public States state = States.idle;
 
-    public enum Status { idle, armed, launched }   
-    public Status status;
+	public Collider2D ballCollider;
 
-    [HideInInspector]
-    public Collider2D ballCollider;
+	// Use this for initialization
+	void Start () {
+		ballCollider = GetComponent<Collider2D> ();
+	}
+	
+	// Update is called once per frame
+	void Update () {
+		
+	}
 
-    [HideInInspector]
-    public Rigidbody2D rb2D;
+	public bool JumpToSlingshot(Vector3 position)
+	{
+		if (state == States.idle) {
+			GetComponent<Rigidbody2D>().MovePosition (position);
+			state = States.armed;
+			return true;
+		}
+		return false;
+	}
 
-    protected GameManager manager;
-
-    protected virtual void Awake()
-    {
-        rb2D = GetComponent<Rigidbody2D>();
-        ballCollider = GetComponent<Collider2D>();
-    }
-
-    public void SetManager(GameManager manager)
-    {
-        this.manager = manager;
-    }
-
-    public virtual void JumpToSling(Transform sling)
-    {
-        rb2D.MovePosition(sling.position);
-        status = Status.armed;
-    }
-
-    public virtual void Launch(Vector2 launchVector)
-    {
-        Debug.Log("Launch " + launchVector);
-        rb2D.isKinematic = false;
-        rb2D.AddRelativeForce(launchVector * 1000);
-        status = Status.launched;
-    }
-
-    
+	public void Launch(Vector2 launchVector)
+	{
+	}
+		
 }
