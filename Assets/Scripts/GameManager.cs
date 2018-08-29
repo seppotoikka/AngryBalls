@@ -5,7 +5,17 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour {
 
-	public static GameManager Instance;
+    /*  An extremely simple implementation of the Singleton design pattern 
+        This means we ensure a class has only one instance, and provide a 
+        global point of access to it, setting the reference in Awake. 
+        
+        For another implementation see 
+        https://unity3d.com/learn/tutorials/projects/2d-roguelike-tutorial/writing-game-manager
+
+        For an in-depth explanation of the design pattern, see
+        http://gameprogrammingpatterns.com/singleton.html 
+    */
+    public static GameManager Instance;
 
 	public enum States { idle, slingArmed, slingAiming, ballReleased }
 	public States state;
@@ -16,17 +26,37 @@ public class GameManager : MonoBehaviour {
 	private Camera mainCamera;
 
 	void Awake () {
-		Instance = this;
+        if (Instance != null && Instance != this)
+        {
+            Debug.LogError("There is already an instance of GameManager!");
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+        }
+		
+        // Create a list of all balls & baddies in the scene to keep track of them
 		balls = new List<Ball>(FindObjectsOfType<Ball>());
         baddies = new List<Baddie>(FindObjectsOfType<Baddie>());
-		slingshot = FindObjectOfType<Slingshot> ();
+
+        /* Cache reference to the slingshot
+           In general it is a good practice whenever possible to use 
+           FindObjects -calls only once and cache the results to improve performance */
+        slingshot = FindObjectOfType<Slingshot> ();
+
+        // Camera.main uses FindObjectsWithTag and is not cached internally, so it is very slow
+        // We will cache the reference to avoid using the call during gameplay
 		mainCamera = Camera.main;
 	}
 
+    // Called from InputController each frame if there is player input
 	public void ProcessInput (Vector2 touchPosition, TouchPhase touchPhase) 
 	{
+        // Convert player input from screen coordinates to game world coordinates
 		Vector2 positionInWorldSpace = mainCamera.ScreenToWorldPoint (touchPosition);
 
+        // Choose a method to process the input depending on current game state
 		switch (state) {
 
 		case States.idle:
@@ -52,6 +82,7 @@ public class GameManager : MonoBehaviour {
 		{
 			foreach (Ball ball in balls) 
 			{
+                // If player clicked on an idle ball, load it into the slingshot
 				if (ball.state == Ball.States.idle && ball.ballCollider.bounds.Contains (positionInWorldSpace)) 
 				{
 					if (slingshot.LoadSlingshot (ball)) 
@@ -63,12 +94,14 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
+    
     private void ProcessArmedPhaseInput(Vector2 positionInWorldSpace, TouchPhase touchPhase)
     {
         if (touchPhase == TouchPhase.Began)
         {
             foreach (Ball ball in balls)
             {
+                // If player clicked on the ball currently loaded in the slingshot, start aiming
                 if (ball.state == Ball.States.armed && ball.ballCollider.bounds.Contains(positionInWorldSpace))
                 {
                     state = States.slingAiming;
@@ -79,12 +112,14 @@ public class GameManager : MonoBehaviour {
 
     private void ProcessAimingPhaseInput(Vector2 positionInWorldSpace, TouchPhase touchPhase)
     {
+        // While the player is holding down the button/finger, update slingshot ball position
         if (touchPhase == TouchPhase.Moved)
         {
             slingshot.Aim(positionInWorldSpace);
         }
         else
         {
+            // Shoot the ball when player releases button
             if (touchPhase == TouchPhase.Ended)
             {
                 slingshot.Shoot();
@@ -97,7 +132,9 @@ public class GameManager : MonoBehaviour {
     {
         balls.Remove(ball);
 
-        if (balls.Count == 0)
+        /*  If there are no more balls or baddies left, process game ending, 
+            else return idle state and wait for player to choose next ball */
+        if (balls.Count == 0 || baddies.Count == 0)
         {
             if (baddies.Count == 0)
             {

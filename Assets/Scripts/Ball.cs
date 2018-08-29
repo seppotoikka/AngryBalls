@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// Information on using attributes see https://docs.unity3d.com/Manual/Attributes.html
 [RequireComponent(typeof(Collider2D))]
 public class Ball : MonoBehaviour {
 
@@ -12,14 +13,15 @@ public class Ball : MonoBehaviour {
     public new Rigidbody2D rigidbody2D;
 
     private SpriteRenderer spriteRenderer;
-	// Use this for initialization
+
+    // Cache references to components to avoid using slow GetComponent call during gameplay
 	void Start () {
 		ballCollider = GetComponent<Collider2D>();
         rigidbody2D = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
 	}
 	
-	// Update is called once per frame
+	// Destroy ball after launch if it has stopped moving or has moved off screen
 	void Update () {
 		if (state == States.launched && (rigidbody2D.IsSleeping() || !spriteRenderer.isVisible))
         {
@@ -28,6 +30,7 @@ public class Ball : MonoBehaviour {
         }
 	}
 
+    //moves to slingshot and returns true if current state is idle, otherwise retuns false
 	public bool JumpToSlingshot(Vector3 position)
 	{
 		if (state == States.idle) {
@@ -38,6 +41,7 @@ public class Ball : MonoBehaviour {
 		return false;
 	}
 
+    //change ball rigidbody from kinematic to dynamic, add launch force and change state
 	public void Launch(Vector2 launchVector)
 	{
         rigidbody2D.isKinematic = false;

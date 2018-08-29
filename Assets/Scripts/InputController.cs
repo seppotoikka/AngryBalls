@@ -2,12 +2,36 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// Can be extended for different types of controllers depending on platform
+// Preprocessor directives (e.g. "#if UNITY_IOS") can be used to include only relevant code for each platform
+// To learn more see https://docs.unity3d.com/Manual/PlatformDependentCompilation.html
 public class InputController : MonoBehaviour {
 	
-	// Update is called once per frame
 	void Update () 
 	{
-		if (Input.GetMouseButtonDown (0)) {
+#if UNITY_IOS || UNITY_ANDROID
+        if (Input.touchCount > 0)
+        {
+            Touch touch = Input.GetTouch(0);
+
+            switch (touch.phase)
+            {
+                case TouchPhase.Began:
+                    GameManager.Instance.ProcessInput(touch.position, TouchPhase.Began);
+                    break;
+
+                case TouchPhase.Ended:
+                    GameManager.Instance.ProcessInput(touch.position, TouchPhase.Ended);
+                    break;
+
+                default:
+                    GameManager.Instance.ProcessInput(touch.position, TouchPhase.Moved);
+                    break;
+
+            }
+        }
+#else
+        if (Input.GetMouseButtonDown (0)) {
 			GameManager.Instance.ProcessInput (Input.mousePosition, TouchPhase.Began);
 		} 
 		else 
@@ -20,25 +44,6 @@ public class InputController : MonoBehaviour {
 				}
 			}
 		}
-
-		if (Input.touchCount > 0) {
-			Touch touch = Input.GetTouch (0);
-
-			switch (touch.phase) 
-			{
-			case TouchPhase.Began:
-				GameManager.Instance.ProcessInput (touch.position, TouchPhase.Began);
-				break;
-
-			case TouchPhase.Ended:
-				GameManager.Instance.ProcessInput (touch.position, TouchPhase.Ended);
-				break;
-
-			default:
-				GameManager.Instance.ProcessInput (touch.position, TouchPhase.Moved);
-				break;
-				
-			}
-		}
-	}
+#endif
+    }
 }

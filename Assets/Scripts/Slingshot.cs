@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Slingshot : MonoBehaviour {
 
+    // Information on using attributes see https://docs.unity3d.com/Manual/Attributes.html
     [Header("Values")]
     [Range(2, 4)]
     public float maxStringLength = 2;
@@ -20,20 +21,20 @@ public class Slingshot : MonoBehaviour {
     private Vector2 idleStringsEndPointPosition;
 
 	void Awake(){
-        /*cache references to line renderer components to avoid using expensive 
-         * GetComponentsInChildren method call many times*/
+        /* Cache references to line renderer components to avoid using expensive 
+           GetComponentsInChildren method call many times */
 		lineRenderers = GetComponentsInChildren<LineRenderer> ();
-        /*calculate aim point, e.g. the point halfway between 
-         * the points where rubber band is attached to the slingshot*/
+        /* Calculate aim point, e.g. the point halfway between 
+           the points where rubber band is attached to the slingshot */
 		aimPoint = (lineRenderers [0].transform.position + lineRenderers [1].transform.position) / 2;
-        //store initial rubber band end point position for later use
+        // Store initial rubber band end point position for later use
         idleStringsEndPointPosition = stringsEndPoint.position;
-        //set the rubber band line renderers to initial position
+        // Set the rubber band line renderers to initial position
         UpdateRubberBands ();
 	}
 
-    //called when the player has selected a ball to be loaded to the slingshot, 
-    //returns true if loading was succesfull (if there wasn't already a ball in the slingshot)
+    // Called when the player has selected a ball to be loaded to the slingshot, 
+    // Returns true if loading was succesfull (if there wasn't already a ball in the slingshot)
 	public bool LoadSlingshot(Ball ball){
 		if (currentlyLoadedBall == null && ball.JumpToSlingshot(stringsEndPoint.position)) {
 			currentlyLoadedBall = ball;
@@ -46,11 +47,14 @@ public class Slingshot : MonoBehaviour {
 	private void UpdateRubberBands(){
         UpdateEndPoint();
 
+        // Update the Line Renderers' line end position
 		foreach (LineRenderer lineRenderer in lineRenderers) {
 			lineRenderer.SetPosition (1, stringsEndPoint.localPosition - lineRenderer.transform.localPosition);
 		}
 	}
 
+    // Wrap rubber bands "around the ball" by setting the stringsEndPoint on the ball edge opposite the aimPoint
+    // If there is no ball loaded, reset the stringEndPoint
 	private void UpdateEndPoint(){
         if (currentlyLoadedBall == null)
         {
@@ -64,7 +68,7 @@ public class Slingshot : MonoBehaviour {
         }
 	}
 
-    //update the position of the loaded ball according to the player touch input position
+    // Update the position of the loaded ball according to the player touch input position
     public void Aim(Vector2 touchPosition)
     {
         if (currentlyLoadedBall != null)
@@ -81,7 +85,7 @@ public class Slingshot : MonoBehaviour {
         }
     }
 
-    //called when the player releases mouse button (or ends touching the screen) while aiming
+    // Called when the player releases mouse button (or ends touching the screen) while aiming
     public void Shoot()
     {
         if (currentlyLoadedBall != null)
